@@ -1,6 +1,7 @@
-import 'package:covid_19_indonesia/model/covid_model.dart';
+import 'package:covid_19_indonesia/model/covid_indonesia.dart';
 import 'package:covid_19_indonesia/network/api.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class Indonesia extends StatefulWidget {
   @override
@@ -10,67 +11,89 @@ class Indonesia extends StatefulWidget {
 class _IndonesiaState extends State<Indonesia> {
   Future<List<CovidIndo>> covid;
 
+  Container _text(String name) {
+    return Container(
+      margin: EdgeInsets.all(10),
+      child: Text(
+        name,
+        style: GoogleFonts.solway(fontWeight: FontWeight.w600, fontSize: 15),
+      ),
+    );
+  }
+
+  Divider _divider() {
+    return Divider(height: 10, color: Colors.grey, indent: 10, endIndent: 10);
+  }
+
+  Container _text2(String name, FontWeight fontWeight, Color color) {
+    return Container(
+      margin: EdgeInsets.all(16),
+      child: Text(
+        name,
+        style: GoogleFonts.scada(
+            fontWeight: fontWeight, fontSize: 15, color: color),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<List<CovidIndo>>(
-        future: API.fetchCovidIndo(),
-        builder: (context, snapshot) {
-          if (snapshot.hasData) {
-            return ListView.builder(
-                itemCount: snapshot.data.length,
-                itemBuilder: (context, index) {
-                  return Container(
-                    margin: EdgeInsets.fromLTRB(8, 8, 8, 8),
-                    child: Card(
-                      elevation: 8,
-                      child: Padding(
-                        padding: EdgeInsets.all(10),
-                        child: Column(
-                          children: <Widget>[
-                            Padding(
-                              padding: EdgeInsets.only(bottom: 10),
-                              child: Text(snapshot.data[index].provinsi),
-                            ),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceAround,
-                              children: <Widget>[
-                                Text(snapshot.data[index].fid.toString()),
-                                Text("Kasus Positif",
-                                    style: TextStyle(color: Colors.lightBlue)),
-                                Text("Kasus Meninggal",
-                                    style: TextStyle(color: Colors.red)),
-                                Text("Kasus Sembuh",
-                                    style: TextStyle(color: Colors.green)),
-                              ],
-                            ),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceAround,
-                              children: <Widget>[
-                                Text(
-                                  snapshot.data[index].kasusPosi.toString(),
-                                  style: TextStyle(color: Colors.lightBlue),
-                                ),
-                                Text(
-                                  snapshot.data[index].kasusMeni.toString(),
-                                  style: TextStyle(color: Colors.red),
-                                ),
-                                Text(
-                                  snapshot.data[index].kasusSemb.toString(),
-                                  style: TextStyle(color: Colors.green),
-                                ),
-                              ],
-                            )
-                          ],
-                        ),
+      future: API.fetchCovidIndo(),
+      builder: (context, snapshot) {
+        if (snapshot.hasData) {
+          return ListView.builder(
+            itemCount: snapshot.data.length,
+            itemBuilder: (context, index) {
+              return Container(
+                width: double.infinity,
+                height: 250,
+                margin: EdgeInsets.all(10),
+                child: Card(
+                  child: Column(
+                    children: <Widget>[
+                      _text(snapshot.data[index].provinsi),
+                      _divider(),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: <Widget>[
+                          _text2("Kasus Sembuh", FontWeight.w400, Colors.black),
+                          _text2(snapshot.data[index].kasusSemb.toString(),
+                              FontWeight.w700, Colors.green)
+                        ],
                       ),
-                    ),
-                  );
-                });
-          } else {
-            return Center(
-              child: CircularProgressIndicator(),
-            );
-          }
-        });
+                      _divider(),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: <Widget>[
+                          _text2(
+                              "Kasus Positif", FontWeight.w400, Colors.black),
+                          _text2(snapshot.data[index].kasusPosi.toString(),
+                              FontWeight.w700, Colors.blueAccent)
+                        ],
+                      ),
+                      _divider(),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: <Widget>[
+                          _text2(
+                              "Kasus Meninggal", FontWeight.w400, Colors.black),
+                          _text2(snapshot.data[index].kasusMeni.toString(),
+                              FontWeight.w700, Colors.red)
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            },
+          );
+        } else {
+          return Center(
+            child: CircularProgressIndicator(),
+          );
+        }
+      },
+    );
   }
 }

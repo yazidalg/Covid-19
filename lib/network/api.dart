@@ -1,7 +1,10 @@
 import 'dart:convert';
 
-import 'package:covid_19_indonesia/model/covid_model.dart';
+import 'package:covid_19_indonesia/model/covid_global.dart';
+import 'package:covid_19_indonesia/model/covid_indonesia.dart';
 import 'package:http/http.dart' as http;
+
+import '../model/covid_indonesia.dart';
 
 class API {
   //Covid Indo
@@ -23,12 +26,11 @@ class API {
   static Future<List<CovidGlobal>> fetchCovidGlobal() async {
     final apiUrl = "https://api.kawalcorona.com/";
     var result = await http.get(apiUrl);
-
     if (result.statusCode == 200) {
       List jsonObj = json.decode(result.body);
       return jsonObj.map((e) => CovidGlobal.fromJson(e)).toList();
     } else {
-      throw Exception("Error");
+      throw "Error";
     }
   }
 }
